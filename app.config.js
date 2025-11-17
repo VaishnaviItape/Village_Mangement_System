@@ -2,12 +2,13 @@ import "dotenv/config";
 
 export default {
   expo: {
-    name: "sales-booster-app",
-    slug: "sales-booster-app",
+    name: "village-management-system",
+    slug: "village-management-system",
     version: "1.0.0",
-    scheme: "salesboosterapp",
+    scheme: "villagemanagementsystem",
+
     android: {
-      package: "com.tmkcomputers.salesboosterapp",
+      package: "com.villagemanagementsystem",
       permissions: [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
@@ -15,8 +16,9 @@ export default {
         "FOREGROUND_SERVICE"
       ],
     },
+
     extra: {
-      apiUrl: process.env.API_URL || "https://rent-api.tmkcomputers.in",
+      apiUrl: process.env.API_URL || "https://village-management-api.in",
       env: process.env.ENV || "production",
       nodeEnv: process.env.NODE_ENV || "production",
     },
