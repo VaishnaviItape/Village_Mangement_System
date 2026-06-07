@@ -1,80 +1,60 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { Image, StatusBar, StyleSheet, View } from "react-native";
+import { View, ActivityIndicator, StyleSheet, Text } from "react-native";
+import Colors from "../constants/Colors";
 
-const SplashScreen = () => {
+export default function SplashScreen() {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const checkAppStatus = async () => {
+    const checkAuth = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
-        const hasOnboarded = await AsyncStorage.getItem("hasOnboarded");
-
-        if (!hasOnboarded) {
-          // First time opening app → show onboarding
-          navigation.replace("onboarding/onboardingScreen");
-          await AsyncStorage.setItem("hasOnboarded", "true"); // Mark onboarding as completed
-        } else if (token) {
-          // User logged in → go to Tabs
-          navigation.replace("(tabs)");
+        const token = await AsyncStorage.getItem("token");
+        const userStr = await AsyncStorage.getItem("user");
+        
+        if (token && userStr) {
+          const user = JSON.parse(userStr);
+          if (user.role === 'admin') {
+            navigation.replace("(admin)");
+          } else {
+            navigation.replace("(villager)");
+          }
         } else {
-          // User not logged in → go to SignIn
-          navigation.replace("auth/signinScreen");
+          navigation.replace("auth/login");
         }
       } catch (error) {
-        console.log("Error reading AsyncStorage:", error);
-        // fallback
-        navigation.replace("auth/signinScreen");
+        console.log("Auth Check Error:", error);
+        navigation.replace("auth/login");
       }
     };
 
     const timer = setTimeout(() => {
-      checkAppStatus();
-    }, 2000); // Splash delay 2s
+      checkAuth();
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-      <Image
-        source={require("../assets/images/app_splash.png")}
-        resizeMode="contain"
-        style={styles.mapImage}
-      />
-      <Image
-        source={require("../assets/images/rentro_logo.png")}
-        resizeMode="contain"
-        style={styles.logo}
-      />
+      <Text style={styles.title}>Village Management</Text>
+      <ActivityIndicator size="large" color={Colors.white} style={{ marginTop: 20 }} />
     </View>
   );
-};
-
-export default SplashScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E51C4B", // fallback if image fails
+    backgroundColor: Colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  mapImage: {
-    width: 598.2,
-    height: 380.9,
-    top: 269.48,
-    left: -85,
-    opacity: 1,
-    position: 'absolute',
-  },
-  logo: {
-    width: 292,
-    height: 98,
-    opacity: 1,
-    position: 'absolute',
-    top: 370,
-    left: 50.5,
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: Colors.white,
+    letterSpacing: 1,
   },
 });
