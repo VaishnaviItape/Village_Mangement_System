@@ -26,9 +26,24 @@ export default function VillagerComplaints() {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
+    loadUser();
     fetchComplaints();
   }, []);
+
+  const loadUser = async () => {
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const userData = await AsyncStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    } catch (e) {
+      console.log('Failed to load user', e);
+    }
+  };
 
   const fetchComplaints = async () => {
     try {
@@ -51,7 +66,13 @@ export default function VillagerComplaints() {
 
     setLoading(true);
     try {
-      const res = await apiClient.post('/complaints', { title, description, category });
+      const payload = {
+        title,
+        description,
+        category,
+        user_id: user?.user_id || user?.id // Try to attach user_id if it exists
+      };
+      const res = await apiClient.post('/complaints', payload);
 
       if (res.data.success) {
         Toast.show({ type: 'success', text1: 'Success', text2: res.data.message || 'Complaint submitted successfully!' });
@@ -109,7 +130,7 @@ export default function VillagerComplaints() {
       ) : (
         <FlatList
           data={complaints}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => (item.complaint_id || item.id || Math.random()).toString()}
           renderItem={renderComplaintCard}
           contentContainerStyle={styles.listContainer}
           ListEmptyComponent={

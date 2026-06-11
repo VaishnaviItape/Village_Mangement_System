@@ -49,6 +49,7 @@ export default function VillagerLayout() {
       <Tabs.Screen
         name="chat"
         options={{
+          href: null,
           title: 'AI Chat',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="hardware-chip-outline" size={size} color={color} />

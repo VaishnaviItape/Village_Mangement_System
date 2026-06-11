@@ -11,6 +11,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
+    "build": "react-scripts build",
     "lint": "expo lint",
     "prebuild": "npx expo prebuild --clean",
     "android:release-apk-expo": "npx expo run:android --variant release",

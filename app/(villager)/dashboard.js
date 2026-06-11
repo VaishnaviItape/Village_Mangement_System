@@ -10,6 +10,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
+  FlatList,
 } from 'react-native';
 import apiClient from '../../api/client';
 
@@ -21,10 +23,16 @@ export default function VillagerDashboard() {
   const [schemes, setSchemes] = useState([]);
   const [loadingSchemes, setLoadingSchemes] = useState(true);
   const [showProfile, setShowProfile] = useState(false); // Toggle Profile Expand
+  
+  // Notification State
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   useEffect(() => {
     loadUser();
     fetchSchemes();
+    fetchNotifications();
   }, []);
 
   const loadUser = async () => {
@@ -47,9 +55,37 @@ export default function VillagerDashboard() {
     }
   };
 
+  const fetchNotifications = async () => {
+    setLoadingNotifications(true);
+    try {
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const userData = await AsyncStorage.getItem('user');
+      let userId = '';
+      if (userData) {
+        const parsedUser = JSON.parse(userData);
+        userId = parsedUser?.user_id || parsedUser?.id || '';
+      }
+      
+      const response = await apiClient.get(`/notifications/my?user_id=${userId}`);
+      if (response.data.success) {
+        setNotifications(response.data.data);
+      }
+    } catch (err) {
+      console.log('Error fetching notifications:', err);
+    } finally {
+      setLoadingNotifications(false);
+    }
+  };
+
+  const handleOpenNotifications = () => {
+    setShowNotifications(true);
+    fetchNotifications();
+  };
+
   const onRefresh = () => {
     setRefreshing(true);
-    fetchSchemes().finally(() => {
+    fetchSchemes();
+    fetchNotifications().finally(() => {
       setRefreshing(false);
     });
   };
@@ -91,15 +127,9 @@ export default function VillagerDashboard() {
   ];
 
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4F46E5" />
-      }
-    >
+    <View style={styles.container}>
       {/* New Profile Header (Reference Style) */}
-      <View style={styles.header}>
+      <View style={[styles.header, { zIndex: 50, elevation: 5 }]}>
         <TouchableOpacity
           style={styles.avatarContainer}
           onPress={() => setShowProfile(!showProfile)}
@@ -113,14 +143,17 @@ export default function VillagerDashboard() {
           <Text style={styles.subText}>Verified Citizen</Text>
         </View>
 
-        <TouchableOpacity style={styles.bellIconContainer}>
+        <TouchableOpacity style={styles.bellIconContainer} onPress={handleOpenNotifications}>
           <Ionicons name="notifications-outline" size={26} color="#4F46E5" />
+          {notifications.length > 0 && (
+            <View style={{position: 'absolute', right: -2, top: -2, backgroundColor: '#EF4444', width: 10, height: 10, borderRadius: 5}} />
+          )}
         </TouchableOpacity>
       </View>
 
       {/* Dynamic & Beautiful Profile Quick Card */}
       {showProfile && (
-        <View style={styles.profileDropdownCard}>
+        <View style={[styles.profileDropdownCard, { position: 'absolute', top: 90, left: 0, right: 0, zIndex: 100, elevation: 10 }]}>
           <View style={styles.profileHeaderSection}>
             <View style={styles.largeAvatar}>
               <Text style={styles.largeAvatarText}>
@@ -157,7 +190,13 @@ export default function VillagerDashboard() {
         </View>
       )}
 
-      <View style={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4F46E5" />
+        }
+      >
+        <View style={styles.content}>
         {/* Summary Card Cards */}
         <View style={styles.summaryCard}>
           <View style={styles.summaryItem}>
@@ -248,8 +287,50 @@ export default function VillagerDashboard() {
             </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+
+      {/* Notifications Modal */}
+      <Modal visible={showNotifications} animationType="slide" transparent={true} onRequestClose={() => setShowNotifications(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Notifications</Text>
+              <TouchableOpacity onPress={() => setShowNotifications(false)}>
+                <Ionicons name="close" size={28} color="#4B5563" />
+              </TouchableOpacity>
+            </View>
+
+            {loadingNotifications ? (
+              <ActivityIndicator size="large" color="#4F46E5" style={{ marginVertical: 30 }} />
+            ) : (
+              <FlatList
+                data={notifications}
+                keyExtractor={(item) => (item.notification_id || item.id || Math.random()).toString()}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                ListEmptyComponent={
+                  <View style={{ alignItems: 'center', marginVertical: 40 }}>
+                    <Ionicons name="notifications-off-outline" size={50} color="#CBD5E1" />
+                    <Text style={{ color: '#9CA3AF', marginTop: 15 }}>No new notifications.</Text>
+                  </View>
+                }
+                renderItem={({ item }) => (
+                  <View style={styles.notificationItem}>
+                    <View style={styles.notificationIcon}>
+                      <Ionicons name="notifications" size={20} color="#4F46E5" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.notificationMessage}>{item.message}</Text>
+                      <Text style={styles.notificationTime}>{item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Recent'}</Text>
+                    </View>
+                  </View>
+                )}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
+    </View>
   );
 }
 
@@ -535,5 +616,51 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
     fontSize: 11,
     marginTop: 2,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  notificationItem: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    alignItems: 'flex-start',
+  },
+  notificationIcon: {
+    backgroundColor: '#EEF2FF',
+    padding: 10,
+    borderRadius: 12,
+    marginRight: 15,
+  },
+  notificationMessage: {
+    fontSize: 15,
+    color: '#374151',
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  notificationTime: {
+    fontSize: 12,
+    color: '#9CA3AF',
   },
 });
