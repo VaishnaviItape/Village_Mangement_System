@@ -21,7 +21,8 @@ export default function VillagerLayout() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard',
+          title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
@@ -37,56 +38,11 @@ export default function VillagerLayout() {
         }}
       />
       <Tabs.Screen
-        name="civic"
+        name="services"
         options={{
-          title: 'Civic',
+          title: 'Services',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="document-text-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="utilities"
-        options={{
-          title: 'Utilities',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="construct-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="business"
-        options={{
-          title: 'Business',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="briefcase-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="agriculture"
-        options={{
-          title: 'Agriculture',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="leaf-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="panchayat"
-        options={{
-          title: 'Sabha',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="taxes"
-        options={{
-          title: 'Taxes',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="cash-outline" size={size} color={color} />
+            <Ionicons name="grid-outline" size={size} color={color} />
           ),
         }}
       />
@@ -99,33 +55,19 @@ export default function VillagerLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="certificates"
-        options={{
-          title: 'Certificates',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="document-text-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="marketplace"
-        options={{
-          title: 'Market',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="cart-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="health"
-        options={{
-          title: 'Health',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="medkit-outline" size={size} color={color} />
-          ),
-        }}
-      />
+      
+      {/* Hidden Screens but still accessible via routing */}
+      <Tabs.Screen name="civic" options={{ href: null, title: 'Civic Services' }} />
+      <Tabs.Screen name="utilities" options={{ href: null, title: 'Utilities' }} />
+      <Tabs.Screen name="business" options={{ href: null, title: 'Business' }} />
+      <Tabs.Screen name="agriculture" options={{ href: null, title: 'Agriculture' }} />
+      <Tabs.Screen name="panchayat" options={{ href: null, title: 'Gram Sabha' }} />
+      <Tabs.Screen name="taxes" options={{ href: null, title: 'Taxes' }} />
+      <Tabs.Screen name="certificates" options={{ href: null, title: 'Certificates' }} />
+      <Tabs.Screen name="marketplace" options={{ href: null, title: 'Marketplace' }} />
+      <Tabs.Screen name="health" options={{ href: null, title: 'Health' }} />
+      <Tabs.Screen name="schemes" options={{ href: null, title: 'Govt Schemes' }} />
+      <Tabs.Screen name="schemeApplication" options={{ href: null, title: 'Apply' }} />
     </Tabs>
   );
 }

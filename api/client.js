@@ -1,9 +1,14 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Replace with your local network IP (e.g., http://192.168.1.100:8080/api)
-// or use 10.0.2.2 for Android Emulator connecting to localhost
-const BASE_URL = 'http://10.0.2.2:8080/api'; 
+import { Platform } from 'react-native';
+
+// Dynamically set BASE_URL based on the platform the app is running on
+const BASE_URL = Platform.OS === 'web' 
+  ? 'http://localhost:8080/api'
+  : Platform.OS === 'android'
+  ? 'http://10.0.2.2:8080/api'
+  : 'http://localhost:8080/api'; // iOS simulator uses localhost
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

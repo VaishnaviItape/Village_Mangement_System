@@ -5,6 +5,8 @@ import Colors from '../../constants/Colors';
 import CustomInput from '../../components/CustomInput';
 import CustomButton from '../../components/CustomButton';
 import apiClient from '../../api/client';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function BusinessEconomy() {
   const [businessName, setBusinessName] = useState('');
@@ -62,10 +64,23 @@ export default function BusinessEconomy() {
     } finally { setLoading(false); }
   };
 
+  const router = useRouter();
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.formCard}>
-        <Text style={styles.cardTitle}>Apply for Trade License</Text>
+    <View style={styles.container}>
+      <View style={styles.headerArea}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>Business & Economy</Text>
+          <Text style={styles.headerSubtitle}>Apply for Trade Licenses.</Text>
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.formCard}>
+          <Text style={styles.cardTitle}>Apply for Trade License</Text>
         
         <CustomInput placeholder="Business Name" value={businessName} onChangeText={setBusinessName} icon="business-outline" />
         <CustomInput placeholder="Business Type (e.g. Grocery, Salon)" value={businessType} onChangeText={setBusinessType} icon="pricetag-outline" />
@@ -92,11 +107,17 @@ export default function BusinessEconomy() {
         ) : <Text style={styles.noData}>No licenses applied.</Text>}
       </View>
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, padding: 15 },
+  container: { flex: 1, backgroundColor: Colors.background },
+  scrollContainer: { padding: 15, paddingBottom: 30 },
+  headerArea: { flexDirection: 'row', alignItems: 'center', padding: 20, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
+  backButton: { marginRight: 15, padding: 5 },
+  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#1F2937', marginBottom: 5 },
+  headerSubtitle: { fontSize: 14, color: '#6B7280' },
   formCard: { backgroundColor: Colors.white, padding: 20, borderRadius: 12, marginBottom: 20, elevation: 2 },
   historyCard: { backgroundColor: Colors.white, padding: 20, borderRadius: 12, marginBottom: 30, elevation: 2 },
   cardTitle: { fontSize: 18, fontWeight: 'bold', color: Colors.text, marginBottom: 15 },

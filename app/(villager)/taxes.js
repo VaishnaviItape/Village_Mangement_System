@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/Colors';
 import apiClient from '../../api/client';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function VillagerTaxes() {
   // Mock unpaid taxes for demo
@@ -53,14 +54,24 @@ export default function VillagerTaxes() {
     </View>
   );
 
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>Pending Taxes</Text>
+      <View style={styles.headerArea}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>Pending Taxes</Text>
+          <Text style={styles.headerSubtitle}>View and pay your pending taxes.</Text>
+        </View>
+      </View>
       <FlatList
         data={taxes}
         keyExtractor={item => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ padding: 15, paddingBottom: 20 }}
       />
     </View>
   );
@@ -69,15 +80,19 @@ export default function VillagerTaxes() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
-    padding: 15,
+    backgroundColor: '#F3F4F6',
   },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: Colors.text,
-    marginBottom: 15,
+  headerArea: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    padding: 20, 
+    backgroundColor: '#FFFFFF', 
+    borderBottomWidth: 1, 
+    borderBottomColor: '#E5E7EB' 
   },
+  backButton: { marginRight: 15, padding: 5 },
+  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#1F2937', marginBottom: 5 },
+  headerSubtitle: { fontSize: 14, color: '#6B7280' },
   card: {
     backgroundColor: Colors.white,
     padding: 15,

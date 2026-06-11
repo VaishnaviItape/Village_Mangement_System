@@ -30,9 +30,9 @@ export default function LoginScreen() {
         
         // Route based on role
         if (response.user.role === 'admin') {
-          router.replace('/(tabs)/admin/dashboard');
+          router.replace('/(admin)/dashboard');
         } else {
-          router.replace('/(tabs)/villager/dashboard');
+          router.replace('/(villager)/dashboard');
         }
       } else {
         Alert.alert('Error', 'Invalid login response');

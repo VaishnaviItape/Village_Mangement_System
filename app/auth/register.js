@@ -22,7 +22,13 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      await registerUser({ name, email, phone, password });
+      await registerUser({ 
+        full_name: name, 
+        email: email, 
+        username: phone, 
+        password: password,
+        role: 'villager'
+      });
       Alert.alert('Success', 'Registration successful. Please login.');
       router.replace('/auth/login');
     } catch (error) {

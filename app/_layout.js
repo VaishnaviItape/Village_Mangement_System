@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { LogBox } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 LogBox.ignoreAllLogs();
 SplashScreen.preventAutoHideAsync();
@@ -26,12 +27,15 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="auth/login" />
-      <Stack.Screen name="auth/register" />
-      <Stack.Screen name="(villager)" options={{ gestureEnabled: false }} />
-      <Stack.Screen name="(admin)" options={{ gestureEnabled: false }} />
-    </Stack>
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="auth/login" />
+        <Stack.Screen name="auth/register" />
+        <Stack.Screen name="(villager)" options={{ gestureEnabled: false }} />
+        <Stack.Screen name="(admin)" options={{ gestureEnabled: false }} />
+      </Stack>
+      <Toast />
+    </>
   );
 }

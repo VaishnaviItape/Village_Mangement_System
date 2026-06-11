@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,11 +44,21 @@ export default function AdminDashboard() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Administrator Dashboard</Text>
-          <Text style={styles.name}>{user?.name || 'Admin'}</Text>
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="person" size={32} color="#4F46E5" />
+        </TouchableOpacity>
+        
+        <View style={styles.userInfoContainer}>
+          <Text style={styles.userNameTop}>Hi, {user?.name || 'Admin'} 👋</Text>
+          <Text style={styles.subText}>Administrator</Text>
         </View>
-        <Ionicons name="shield-checkmark" size={50} color={Colors.primary} />
+
+        <TouchableOpacity style={styles.bellIconContainer}>
+          <Ionicons name="notifications-outline" size={26} color="#4F46E5" />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.statsContainer}>
@@ -80,18 +90,33 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: '#FAF5F5',
+    marginHorizontal: -20,
+    paddingHorizontal: 20,
     marginBottom: 25,
   },
-  greeting: {
-    fontSize: 16,
-    color: Colors.textLight,
+  avatarContainer: {
+    marginRight: 15,
   },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.text,
+  userInfoContainer: {
+    flex: 1,
+  },
+  userNameTop: {
+    color: '#111827',
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  subText: {
+    color: '#6B7280',
+    marginTop: 2,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  bellIconContainer: {
+    padding: 5,
   },
   statsContainer: {
     flexDirection: 'row',

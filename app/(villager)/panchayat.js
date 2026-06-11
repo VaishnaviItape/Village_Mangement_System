@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import Colors from '../../constants/Colors';
 import apiClient from '../../api/client';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter, TouchableOpacity } from 'expo-router';
 
 export default function PanchayatInfo() {
   const [meetings, setMeetings] = useState([]);
@@ -16,12 +18,21 @@ export default function PanchayatInfo() {
     } catch (e) { console.log(e); } finally { setLoading(false); }
   };
 
+  const router = useRouter();
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Gram Sabha Meetings</Text>
-        <Text style={styles.headerSub}>Stay updated with village decisions</Text>
+    <View style={styles.container}>
+      <View style={styles.headerArea}>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.headerTitle}>Gram Sabha Meetings</Text>
+          <Text style={styles.headerSubtitle}>Stay updated with village decisions.</Text>
+        </View>
       </View>
+
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
 
       {loading ? <ActivityIndicator size="large" color={Colors.primary} style={{marginTop: 50}} /> : meetings.length > 0 ? (
         meetings.map((item) => (
@@ -45,15 +56,18 @@ export default function PanchayatInfo() {
           </View>
         ))
       ) : <Text style={styles.noData}>No upcoming meetings found.</Text>}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background, padding: 15 },
-  header: { marginBottom: 20 },
-  headerTitle: { fontSize: 24, fontWeight: 'bold', color: Colors.primary },
-  headerSub: { fontSize: 14, color: Colors.textLight },
+  container: { flex: 1, backgroundColor: Colors.background },
+  scrollContainer: { padding: 15, paddingBottom: 30 },
+  headerArea: { flexDirection: 'row', alignItems: 'center', padding: 20, backgroundColor: '#FFFFFF', borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
+  backButton: { marginRight: 15, padding: 5 },
+  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#1F2937', marginBottom: 5 },
+  headerSubtitle: { fontSize: 14, color: '#6B7280' },
   card: { backgroundColor: Colors.white, padding: 20, borderRadius: 12, marginBottom: 15, elevation: 2 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15, borderBottomWidth: 1, borderBottomColor: Colors.lightGray, paddingBottom: 10 },
   date: { fontSize: 16, fontWeight: 'bold', color: Colors.text },
